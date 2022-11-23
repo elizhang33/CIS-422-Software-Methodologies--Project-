@@ -1,0 +1,59 @@
+<!--
+___register.html___
+Registration webpage. Contains a form that is handled by app.py on submission for users to create an account.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <!-- 
+    Nav bar: Provides links to other locations on the website based on whether the user is logged in
+    https://www.w3schools.com/css/css_navbar_horizontal.asp
+    -->
+    <ul>
+        {% if current_user.is_anonymous %}
+            <li><a href="/display">Display</a></li>
+            <li style="float:right"><a class="active" href="/login">Log in</a></li>
+        {% else %}
+            <li><a href="/">Home</a></li>
+            <li><a href="/display">Display</a></li>
+            <li><a href="/report">Reporting</a></li>
+            <li style="float:right"><a class="active" href="/logout">Log out</a></li>
+        {% endif %}
+    </ul>
+    <h1>Welcome! Please create an account.</h1>
+
+    <!--
+    Form declaration: sends information from location.html to app.py to create a new user in the user_id db
+    contains username, password, and email
+    -->
+    <form method="POST" action="/register">
+        {{ form.csrf_token }}
+        {{ form.username.label }} {{ form.username(size=20) }}
+        {{ form.password.label }} {{ form.password(size=20) }}
+        {{ form.email.label }} {{ form.email(size=20) }}
+        <input type="submit" value="Register">
+    </form>
+
+    <!--
+    Message flashing: Prints closable messages to the user from app.py
+    -->
+    <div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">
+                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                        {{message}}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block body %}{% endblock %}
+    </div>
+</body>
+</html>

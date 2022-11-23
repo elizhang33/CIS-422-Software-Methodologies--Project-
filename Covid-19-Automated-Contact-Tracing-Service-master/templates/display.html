@@ -1,0 +1,60 @@
+<!--
+___display.html___
+Display webpage. Contains a form that is handled by app.py on submission for users to retrieve their location data from the database.
+Data is output as CSV or TXT files.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Display</title>
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <!-- 
+    Nav bar: Provides links to other locations on the website based on whether the user is logged in 
+    https://www.w3schools.com/css/css_navbar_horizontal.asp
+    -->
+    <ul>
+        {% if current_user.is_anonymous %}
+            <li><a href="/display">Display</a></li>
+            <li style="float:right"><a class="active" href="/login">Log in</a></li>
+        {% else %}
+            <li><a href="/">Home</a></li>
+            <li><a href="/display">Display</a></li>
+            <li><a href="/report">Reporting</a></li>
+            <li style="float:right"><a class="active" href="/logout">Log out</a></li>
+        {% endif %}
+    </ul>
+    <h1>Location History</h1>
+    <!--
+    Form declaration: sends information from display.html to app.py to retrieve all user_info entries of one user
+    contains username and text document format style (tab)
+    -->
+    <form method='POST'>
+      {{ form.csrf_token }}
+      {{ form.username.label }} {{ form.username(size=20) }}
+      {{ form.tab.label }} {{ form.tab(size=20) }}
+    <input type="submit" value="Search">
+    </form>
+
+    <p>Search your username to get location data as a CSV file. Import that file at maps.co to view your data on a map.</p>
+
+    <!--
+    Message flashing: Prints closable messages to the user from app.py
+    -->
+    <div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">
+                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                        {{message}}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block body %}{% endblock %}
+    </div>
+</body>
+</html>
